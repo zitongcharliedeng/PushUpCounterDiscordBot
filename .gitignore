@@ -1,0 +1,4 @@
+# inside my .env file is: (take away comment status)
+# DISCORD_TOKEN=my-bot-token
+# DISCORD_GUILD=name-of-the-server-i-want-to-use
+.env 
