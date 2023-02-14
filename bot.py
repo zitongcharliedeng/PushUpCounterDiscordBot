@@ -4,9 +4,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from pocketbase import PocketBase
-from datetime import datetime
 import json
-
 
 load_dotenv()
 
@@ -34,6 +32,7 @@ async def on_ready():
 
 @bot.command(name='add', help="Add your pushups to the server's total!")
 async def addResponse(ctx, pushups):
+
   addQuotes = [
     'Nice work out! ',
     (
@@ -43,17 +42,54 @@ async def addResponse(ctx, pushups):
 
   data = {
     "userId": f"{ctx.author}",
-    "pushups": pushups,
-    "time": f"{datetime.now()}"
+    "pushups": f"{int(pushups)}",
   }
 
-  async def create():
-    return pb.collection('contributions').create(data)
 
-  await create()
+  createContributionResponse = None
+  def createContribution():
+    nonlocal createContributionResponse
+    createContributionResponse = (pb.collection('contributions').create(data)).__dict__
+  createContribution()
+
+  netContributionId = ""
+  pastPushups = 0
+
+  async def readNetContribution():
+    list = (pb.collection('netContribution').get_list(1,1,{"filter": f'userId="{(createContributionResponse)["user_id"]}"'})).__dict__
+    if (len(list["items"]) == 0):
+      response = "no NetContribution record exists yet"
+    else:
+      response = list["items"][0].__dict__
+      nonlocal netContributionId 
+      netContributionId = response["id"]
+      nonlocal pastPushups 
+      pastPushups = response["pushups"]
+    return response
+  await readNetContribution()
+
+  message = ""
+  
+  async def createOrUpdateNetContribution():
+    if (await readNetContribution() == "no NetContribution record exists yet"):
+      nonlocal message 
+      message = "Congrats on your first pushups! "
+      data = {
+        "userId": f"{ctx.author}",
+        "pushups": f"{int(pushups)}",
+      }
+      return pb.collection('netContribution').create(data) #!!!!!!!!!!!!!!!!!!!!!!!!!
+    else:
+      data = {
+        "pushups": f"{pastPushups + int(pushups)}",
+      }
+      return pb.collection('netContribution').update(netContributionId, data)
+  await createOrUpdateNetContribution()
+
+
   print(f"{client.guilds}")
-  response = f"You added {pushups} pushups, {ctx.author}. " + random.choice(addQuotes)
-  await ctx.send(response)
+  message = message + f"You added {pushups} pushups, {ctx.author}. " + random.choice(addQuotes)
+  await ctx.send(message)
   
 
 
@@ -69,13 +105,43 @@ async def removeResponse(ctx, pushups):
   data = {
     "userId": f"{ctx.author}",
     "pushups": -int(pushups),
-    "time": f"{datetime.now()}"
   }
 
-  async def create():
-    return pb.collection('contributions').create(data)
+  createContributionResponse = None
+  def createContribution():
+    nonlocal createContributionResponse
+    createContributionResponse = (pb.collection('contributions').create(data)).__dict__
+  createContribution()
 
-  await create()
+  netContributionId = ""
+  pastPushups = 0
+
+  async def readNetContribution():
+    list = (pb.collection('netContribution').get_list(1,1,{"filter": f'userId="{(createContributionResponse)["user_id"]}"'})).__dict__
+    if (len(list["items"]) == 0):
+      response = "no NetContribution record exists yet"
+    else:
+      response = list["items"][0].__dict__
+      nonlocal netContributionId 
+      netContributionId = response["id"]
+      nonlocal pastPushups 
+      pastPushups = response["pushups"]
+    return response
+  await readNetContribution()
+
+  message = ""
+
+  async def createOrUpdateNetContribution():
+    if (await readNetContribution() == "no NetContribution record exists yet"):
+      nonlocal message 
+      message = "Congrats on your first... anti-pushups? "
+      return pb.collection('netContribution').create(data)
+    else:
+      data = {
+        "pushups": f"{pastPushups - int(pushups)}",
+      }
+      return pb.collection('netContribution').update(netContributionId, data)
+  await createOrUpdateNetContribution()
 
   response = f"You removed {pushups}, {ctx.author}. " + random.choice(removeQuotes)
   await ctx.send(response)
