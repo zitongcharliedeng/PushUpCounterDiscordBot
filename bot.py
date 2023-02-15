@@ -88,7 +88,7 @@ async def addResponse(ctx, pushups):
 
 
   print(f"{client.guilds}")
-  message = message + f"You added {pushups} pushups, {ctx.author}. " + random.choice(addQuotes)
+  message = f"{message} You added {pushups} pushups, {ctx.author}. {random.choice(addQuotes)}"
   await ctx.send(message)
   
 
@@ -143,41 +143,40 @@ async def removeResponse(ctx, pushups):
       return pb.collection('netContribution').update(netContributionId, data)
   await createOrUpdateNetContribution()
 
-  response = f"You removed {pushups}, {ctx.author}. " + random.choice(removeQuotes)
-  await ctx.send(response)
+  message = f"{message} You removed {pushups}, {ctx.author}. {random.choice(removeQuotes)}"
+  await ctx.send(message)
 
 
 
-@bot.command(name='leaderboard', help="Who is carrying?")
+@bot.command(name='leaderboard', help="See who is carrying?")
 async def leaderboard(ctx):
 
-  #fetch a paginated records list
-  async def resultList():
-    return pb.collection('contributions').get_list(1, 50, {
-    "filter": 'created >= "2022-01-01 00:00:00"',
-  })
-  await resultList()
-  print((await resultList()).items[0])
+  data = {
+    "userId": f"{ctx.author}", #maybe show users current rank at top in future feature?
+  }
 
-   #you can also fetch all records at once via getFullList
-  # async def records():
-  #   return pb.collection('contributions').get_full_list(200 , {
-  #   "sort": '-created',
-  # })
-  # await records()
-  # print((await records()))
+  def readAllNetContributions():
+    list = (pb.collection('netContribution').get_list(1,10,{"sort": '-pushups'})).__dict__["items"]
+    if (len(list) == 0):
+      response = False
+    else:
+      response = list
+    return response
 
-  #or fetch only the first record that matches the specified filter
-  # async def record():
-  #   return pb.collection('contributions')._get_first_list_item('someField="test"', {
-  #   "expand": 'relField1,relField2.subRelField',
-  # })
-  # await record()
-  # print(f'{record}')
+  def leaderboard():
+    list = readAllNetContributions()
+    if list == False:
+      return "Empty records :(" 
+    else:
+      bulletpoints = []
+      for record in list:
+        bulletpoints.append(f"  -{record.__dict__['user_id']} | {record.__dict__['pushups']} pushups") 
+      formatted_bulletpoints = "\n".join(bulletpoints)
+    return formatted_bulletpoints
 
-
-
-
+  message = ""
+  message = f"{message}\nCurrent Leader Board:\n{leaderboard()}"
+  await ctx.send(message)
 
 
 bot.run(TOKEN)
