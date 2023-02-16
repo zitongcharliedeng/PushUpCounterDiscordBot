@@ -3,3 +3,4 @@
 # DISCORD_GUILD=name-of-the-server-i-want-to-use
 .env 
 pb_data/
+Deployment/
