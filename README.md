@@ -7,6 +7,11 @@
 - Leaderboard feature
 - Calender feature with contribution levels for each person AND collective one
 - Projected finish time according to push up rate so far
+## DEVELOPMENT
+# to set up in development
+Create .env file in root, see .gitignore comments
+```./pocketbase serve``` to create db  
+```python3 bot.py``` to start bot
 ## DEPLOYMENT
 # this is how i deployed:
 for my pocketbase backend: https://github.com/pocketbase/pocketbase/discussions/537  
