@@ -2,7 +2,7 @@
 ## Current Features
 - Add or take away n pushups from a database (w/ ur discord user and current time recorded with it) using "pushups!add n" or "pushups!remove n" in discord channel with the bot  
 - See a leaderboard to see who is doing the most using "pushups!leaderboard"
-<details><summary>Example Image</summary><p><img src="https://user-images.githubusercontent.com/108423881/219471784-d58e8894-a2ab-4029-9e45-5331792cface.png"></p></details>
+<details><summary>Example Image</summary><p><img src="https://user-images.githubusercontent.com/108423881/219471784-d58e8894-a2ab-4029-9e45-5331792cface.png">  Sorry for light mode</p></details>
 
 ## END GOAL FEATURES
 - Add (and take away ONLY UR OWN if by accident (admins can take away anyone's) ) pushups to a collective counter easily
