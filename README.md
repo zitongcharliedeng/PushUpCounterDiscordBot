@@ -16,3 +16,4 @@ Create .env file in root, see .gitignore comments
 ### this is how i chose to deploy (free for small scale testing):
 for my pocketbase backend: https://github.com/pocketbase/pocketbase/discussions/537  
 for the bot script: https://replit.com/@Zi-TongDeng/PushUpCounterDiscordBot  (remember to create repl secrets instead of .env for your tokens!)
+and also https://replit.com/talk/ask/Hosting-a-Discord-bot-on-Repl/18608 (best reply, but i put 5 mins monitoring interval) to stop timeouts that still occur fsr
