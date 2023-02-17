@@ -159,10 +159,16 @@ async def removeResponse(ctx, pushups):
 
 @bot.command(name='leaderboard', help="See who is carrying?")
 async def leaderboard(ctx):
+  totalPushups = 0
 
   def readAllNetContributions():
     list = (pb.collection('netContribution').get_list(
       1, 10, {"sort": '-pushups'})).__dict__["items"]
+
+    for record in list:
+      nonlocal totalPushups
+      totalPushups = totalPushups + int(record.__dict__['pushups'])
+
     if (len(list) == 0):
       response = False
     else:
@@ -182,9 +188,11 @@ async def leaderboard(ctx):
       formatted_bulletpoints = "\n".join(bulletpoints)
     return formatted_bulletpoints
 
-  embed = discord.Embed(title='Current Leader Board:',
-                        description=f'{leaderboard()}',
-                        color=discord.Colour.blue())
+  embed = discord.Embed(
+    description=
+    f'{leaderboard()}',  # run description first to update totalPushups
+    title=f'Top 10 Pushers (Their Total: {totalPushups}): ',
+    color=discord.Colour.blue())
   embed.set_image(url=f"{IMAGE_SECRET}")
   embed.set_thumbnail(url=f"{THUMBNAIL_SECRET}")
 
