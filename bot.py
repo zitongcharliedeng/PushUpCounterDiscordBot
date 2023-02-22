@@ -90,7 +90,7 @@ async def addResponse(ctx, pushups):
         "pushups": f"{int(pushups)}",
       }
       return pb.collection('netContribution').create(
-        data)  #!!!!!!!!!!!!!!!!!!!!!!!!!
+        data)
     else:
       data = {
         "pushups": f"{pastPushups + int(pushups)}",
@@ -209,12 +209,6 @@ async def leaderboardResponse(ctx):
 
 
 #---New "slash" autofill commands version of pushups! commands (uses slashes instead of pushups!), built into discord messages---
-@bot.tree.command(name="hello")
-@app_commands.describe(thing_to_say = "what you gonna")
-async def hello(interaction: discord.Interaction, thing_to_say: str):
-  await interaction.response.send_message(f"Hey {interaction.user.mention} you said {thing_to_say}")
-  print(interaction.user)
-
 @bot.tree.command(name="add", description="Add some pushups to your name!")
 @app_commands.describe(pushups = "The number of pushup(s) you did.")
 async def slashAddResponse(interaction: discord.Interaction, pushups: str):
